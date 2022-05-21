@@ -1,9 +1,9 @@
 import requests
-
+from settings import *
 parameters = {
-    "amount": 20,
-    "difficulty": "easy",
-    "category": 18,
+    "amount": QUESTIONS,
+    "difficulty": DIFFICULTIES[DIFFICULTY],
+    "category": CATEGORY,
     "type": "multiple",
 }
 response = requests.get("https://opentdb.com/api.php", params=parameters)

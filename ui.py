@@ -1,12 +1,62 @@
 from tkinter import *
+from tkinter import messagebox
 from engine import Engine
+import settings
 
 THEME_COLOR = "royalblue"
+
+
+class Settings:
+
+    def __init__(self):
+        self.settings = Tk()
+        self.settings.title("Settings")
+        self.settings.config(padx=20, pady=20)
+        self.label = Label(self.settings, width=40, text="Change game settings")
+        self.label.grid(row=0, column=0, columnspan=3, pady=20, sticky="ew")
+
+        self.label_category = Label(self.settings, text="Category")
+        self.label_category.grid(row=1, column=0)
+        self.category = Listbox(self.settings, width=30, exportselection=False)
+        for cat in range(9, 33):
+            self.category.insert(cat, settings.TRIVIA_CATEGORIES[cat])
+        self.category.grid(row=2, column=0, rowspan=4, padx=10)
+
+        self.label_amount = Label(self.settings, width=16, text="How many questions")
+        self.label_amount.grid(row=1, column=2, sticky="ew")
+        self.amount = Entry(self.settings, width=10)
+        self.amount.insert(0, settings.QUESTIONS)
+        self.amount.grid(row=2, column=2, sticky="ew")
+
+        self.label_difficulty = Label(self.settings, text="  Question \n difficulty")
+        self.label_difficulty.grid(row=3, column=2)
+        self.difficulty = Listbox(self.settings, height=3, exportselection=False)
+        self.difficulty.insert("end", *["easy", "medium", "hard"])
+        self.difficulty.select_set(settings.DIFFICULTY)
+        self.difficulty.grid(row=4, column=2)
+
+        self.btn_save = Button(self.settings, text="SAVE", command=self.btn_save)
+        self.btn_save.grid(row=6, column=0, columnspan=3, sticky="ew", pady=15)
+
+        self.settings.mainloop()
+
+    def btn_save(self):
+        questions = self.amount.get()
+        difficulty = self.difficulty.curselection()[0]
+        category = self.category.curselection()[0] + 9
+        settings.save_settings(questions, difficulty, category)
+        messagebox.showinfo(message="Please restart application")
+        self.settings.destroy()
+
+
+def change_settings():
+    Settings()
 
 
 class Interface:
 
     def __init__(self, quiz_engine: Engine):
+
         self.quiz = quiz_engine
         self.options = []
         self.answer = ""
@@ -15,7 +65,7 @@ class Interface:
         self.window.config(bg=THEME_COLOR, padx=20, pady=20)
         self.score_label = Label()
         self.score_label.config(text="Score: 0", bg=THEME_COLOR, fg="white", font=("Arial", 16))
-        self.score_label.grid(row=0, column=3)
+        self.score_label.grid(row=0, column=3, sticky="se")
 
         self.canvas = Canvas(width=600, height=300, bg="white")
         background_img = PhotoImage(file="./images/background.png")
@@ -27,6 +77,8 @@ class Interface:
                                               justify="center")
         self.canvas.grid(row=1, column=0, columnspan=4, pady=40)
 
+        self.btn_settings = Button(width=15, text="Settings", command=change_settings)
+        self.btn_settings.grid(row=0, column=0, sticky="w")
         self.btn_one = Button(width=35, height=5, wraplength=160, command=lambda: self.check_answer(0))
         self.btn_one.grid(row=2, column=0, columnspan=2, sticky="w")
         self.btn_two = Button(width=35, height=5, wraplength=160, command=lambda: self.check_answer(1))
