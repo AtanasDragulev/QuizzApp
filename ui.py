@@ -20,6 +20,8 @@ class Settings:
         self.category = Listbox(self.settings, width=30, exportselection=False)
         for cat in range(9, 33):
             self.category.insert(cat, settings.TRIVIA_CATEGORIES[cat])
+        self.category.selection_set(settings.CATEGORY - 9)
+        print(settings.CATEGORY)
         self.category.grid(row=2, column=0, rowspan=4, padx=10)
 
         self.label_amount = Label(self.settings, width=16, text="How many questions")
@@ -42,6 +44,8 @@ class Settings:
 
     def btn_save(self):
         questions = self.amount.get()
+        if len(questions) == 0:
+            questions = 10
         difficulty = self.difficulty.curselection()[0]
         category = self.category.curselection()[0] + 9
         settings.save_settings(questions, difficulty, category)

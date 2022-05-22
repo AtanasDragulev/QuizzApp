@@ -16,4 +16,3 @@ for question in question_data:
 
 quiz = Engine(question_bank)
 quiz_ui = Interface(quiz)
-
